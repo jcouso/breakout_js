@@ -1,5 +1,8 @@
 
-// // *******************************************
+// *******************************************
+// ***************** LeaderRect
+// *******************************************
+
 function LeaderRect(canvas) {
   this.ctx = canvas.getContext('2d')
   this.canvas = canvas
@@ -11,7 +14,7 @@ function LeaderRect(canvas) {
   this.y = canvas.height * 0.95 - this.height;
 }
 
-LeaderRect.prototype.drawRectagle = function() {
+LeaderRect.prototype.draw = function() {
   this.ctx.beginPath();
   this.ctx.rect(this.x, this.y, this.width, this.height);
   this.ctx.fillStyle = this.color;
@@ -36,11 +39,8 @@ LeaderRect.prototype.moveLeft = function() {
 }
 
 // *******************************************
-
-// BALL
-
-
-
+// ***************** BALL 
+// *******************************************
 function Ball(canvas, leaderRect) {
   this.canvas = canvas
   this.ctx = canvas.getContext('2d')
@@ -63,9 +63,7 @@ Ball.prototype.draw = function () {
 
 Ball.prototype.move = function () {
   this.ctx.clearRect(0, 0, canvas.width, canvas.height)
-  
   this.checkCollition();
-
   this.y += this.speed_y
   this.x += this.speed_x
   this.draw()
@@ -73,7 +71,6 @@ Ball.prototype.move = function () {
 
 Ball.prototype.checkCollition = function () {
   // check colliton agaist the end of the canvas
-
   if (this.x + this.radius > this.canvas.width) {
     this.speed_x = -1 * this.speed_x  
   } else if (this.x - this.radius < 0) {
@@ -84,8 +81,8 @@ Ball.prototype.checkCollition = function () {
     this.speed_y = -1 * this.speed_y
   }
 
-  // check collotion with leader rect
-  if (this.y + this.radius > this.leaderRect.y || this.y + this.radius > this.leaderRect.y + this.leaderRect.height) {
+  // check collition with leader rect
+  if (this.y + this.radius > this.leaderRect.y && this.y + this.radius < this.leaderRect.y + this.leaderRect.height) {
     if (this.x + this.radius > this.leaderRect.x) {
       if  (this.x + this.radius < this.leaderRect.x + this.leaderRect.width) {
         this.speed_y = -1 * this.speed_y
@@ -96,9 +93,7 @@ Ball.prototype.checkCollition = function () {
 
 
 const canvas = document.getElementById("game");
-
 leaderRect = new LeaderRect(canvas)
-
 ball = new Ball(canvas, leaderRect)
 
 document.addEventListener('keydown', (event) => {
@@ -113,7 +108,7 @@ document.addEventListener('keydown', (event) => {
 function gameLoop() {
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
   ball.move()
-  leaderRect.drawRectagle();
+  leaderRect.draw();
 }
 
 setInterval(gameLoop, 10);
