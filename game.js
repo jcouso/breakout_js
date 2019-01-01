@@ -51,15 +51,19 @@ document.addEventListener('keydown', (event) => {
 
 // BALL
 
-ctx = canvas.getContext('2d')
 
-var x = 20;
-var y = 100;
 
-var speed_x = -1;
-var speed_y = -1;
+function Ball(canvas, leaderRect) {
+  this.ctx = canvas.getContext('2d')
 
-function drawBall() {
+  this.x = 20;
+  this.y = 100;
+  
+  this.speed_x = -1;
+  this.speed_y = -1;
+}
+
+Ball.prototype.drawBall = function () {
   ctx.beginPath();
   ctx.arc(x, y, 15, 0, 2 * Math.PI);
   ctx.fillStyle = "red";
@@ -67,7 +71,7 @@ function drawBall() {
   ctx.closePath();
 }
 
-function ballMovement() {
+Ball.prototype.ballMove = function () {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   
   if (x + 15 > canvas.width) {
@@ -78,14 +82,13 @@ function ballMovement() {
   if (y + 15 == leaderRect.y && ((x + 15) > leaderRect.x && (x + 15) < (leaderRect.x + leaderRect.width))) {
     speed_y = -1 * speed_y
   } else if (y + 15 > canvas.height) {  
-    // speed_y = -1 * speed_y
   } else if (y < 15) {
     speed_y = -1 * speed_y
   }
 
   y += speed_y
   x += speed_x
-  drawBall() 
+  this.drawBall() 
 }
 
 function gameLoop() {
