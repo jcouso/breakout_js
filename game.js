@@ -91,10 +91,40 @@ Ball.prototype.checkCollition = function () {
   }
 }
 
+// *******************************************
+// ***************** Tile
+// *******************************************
+function Tile(canvas, x, y) {
+  this.ctx = canvas.getContext('2d');
+  this.x = x
+  this.y = y
+  this.width = 110;
+  this.height = 15;
+  this.margin = 10;
+  this.color = "pink"
+}
+
+Tile.prototype.draw = function () {
+  this.ctx.beginPath()
+  this.ctx.rect((this.x + this.margin), (this.y + this.margin), this.width, this.height)
+  this.ctx.fillStyle = this.color
+  this.ctx.fill()
+  this.ctx.closePath()
+}
 
 const canvas = document.getElementById("game");
 leaderRect = new LeaderRect(canvas)
 ball = new Ball(canvas, leaderRect)
+
+function buildTiles() {
+  tiles = []
+  quantity = Math.floor(canvas.width / 140);
+  for (let i = 0; i <= quantity; i++) {
+    tile = new Tile(canvas, 132 * i, 0)
+    tiles.push(tile)
+  }
+  return tiles
+}
 
 document.addEventListener('keydown', (event) => {
   if (event.keyCode == 39) {
@@ -105,9 +135,13 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+tiles = buildTiles()
+
 function gameLoop() {
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
   ball.move()
+  tiles.forEach(tile => {
+    tile.draw()
+  });
   leaderRect.draw();
 }
 
