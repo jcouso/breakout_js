@@ -5,7 +5,7 @@ function LeaderRect(canvas) {
   this.canvas = canvas
   this.width = 110
   this.height = 15
-  this.movingSpeed = 13
+  this.movingSpeed = 30
   this.color = "blue"
   this.x = (canvas.width - this.width) / 2;
   this.y = canvas.height * 0.95 - this.height;
@@ -46,37 +46,52 @@ function Ball(canvas, leaderRect) {
   this.ctx = canvas.getContext('2d')
   this.x = 20;
   this.y = 100;
-  this.speed_x = -1;
-  this.speed_y = -1;
+  this.radius = 15;
+  this.speed_x = -3;
+  this.speed_y = -3;
   this.leaderRect = leaderRect
 }
 
-Ball.prototype.drawBall = function () {
+Ball.prototype.draw = function () {
   this.ctx.beginPath();
-  this.ctx.arc(this.x, this.y, 15, 0, 2 * Math.PI);
+  this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
   this.ctx.fillStyle = "red";
   this.ctx.fill();
-  this.ctx.closePath();
+  this.ctx.closePath(); 
+
 }
 
-Ball.prototype.ballMove = function () {
+Ball.prototype.move = function () {
   this.ctx.clearRect(0, 0, canvas.width, canvas.height)
   
-  if (this.x + 15 > this.canvas.width) {
-    this.speed_x = -1 * this.speed_x  
-  } else if (this.x < 15) {
-    this.speed_x = -1 * this.speed_x
-  }
-  if (this.y + 15 == this.leaderRect.y && ((this.x + 15) > this.leaderRect.x && (this.x + 15) < (this.leaderRect.x + this.leaderRect.width))) {
-    this.speed_y = -1 * this.speed_y
-  } else if (this.y + 15 > this.canvas.height) {  
-  } else if (this.y < 15) {
-    this.speed_y = -1 * this.speed_y
-  }
+  this.checkCollition();
 
   this.y += this.speed_y
   this.x += this.speed_x
-  this.drawBall() 
+  this.draw()
+}
+
+Ball.prototype.checkCollition = function () {
+  // check colliton agaist the end of the canvas
+
+  if (this.x + this.radius > this.canvas.width) {
+    this.speed_x = -1 * this.speed_x  
+  } else if (this.x - this.radius < 0) {
+    this.speed_x = -1 * this.speed_x
+  }
+
+  if (this.y - this.radius < 0) {
+    this.speed_y = -1 * this.speed_y
+  }
+
+  // check collotion with leader rect
+  if (this.y + this.radius > this.leaderRect.y || this.y + this.radius > this.leaderRect.y + this.leaderRect.height) {
+    if (this.x + this.radius > this.leaderRect.x) {
+      if  (this.x + this.radius < this.leaderRect.x + this.leaderRect.width) {
+        this.speed_y = -1 * this.speed_y
+      }
+    } 
+  }
 }
 
 
@@ -96,8 +111,9 @@ document.addEventListener('keydown', (event) => {
 });
 
 function gameLoop() {
-  ball.ballMove()
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+  ball.move()
   leaderRect.drawRectagle();
 }
 
-setInterval(gameLoop, 1);
+setInterval(gameLoop, 10);
