@@ -36,9 +36,55 @@ LeaderRect.prototype.moveLeft = function() {
 }
 
 // *******************************************
+
+// BALL
+
+
+
+function Ball(canvas, leaderRect) {
+  this.canvas = canvas
+  this.ctx = canvas.getContext('2d')
+  this.x = 20;
+  this.y = 100;
+  this.speed_x = -1;
+  this.speed_y = -1;
+  this.leaderRect = leaderRect
+}
+
+Ball.prototype.drawBall = function () {
+  this.ctx.beginPath();
+  this.ctx.arc(this.x, this.y, 15, 0, 2 * Math.PI);
+  this.ctx.fillStyle = "red";
+  this.ctx.fill();
+  this.ctx.closePath();
+}
+
+Ball.prototype.ballMove = function () {
+  this.ctx.clearRect(0, 0, canvas.width, canvas.height)
+  
+  if (this.x + 15 > this.canvas.width) {
+    this.speed_x = -1 * this.speed_x  
+  } else if (this.x < 15) {
+    this.speed_x = -1 * this.speed_x
+  }
+  if (this.y + 15 == this.leaderRect.y && ((this.x + 15) > this.leaderRect.x && (this.x + 15) < (this.leaderRect.x + this.leaderRect.width))) {
+    this.speed_y = -1 * this.speed_y
+  } else if (this.y + 15 > this.canvas.height) {  
+  } else if (this.y < 15) {
+    this.speed_y = -1 * this.speed_y
+  }
+
+  this.y += this.speed_y
+  this.x += this.speed_x
+  this.drawBall() 
+}
+
+
 const canvas = document.getElementById("game");
 
 leaderRect = new LeaderRect(canvas)
+
+ball = new Ball(canvas, leaderRect)
 
 document.addEventListener('keydown', (event) => {
   if (event.keyCode == 39) {
@@ -49,50 +95,8 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-// BALL
-
-
-
-function Ball(canvas, leaderRect) {
-  this.ctx = canvas.getContext('2d')
-
-  this.x = 20;
-  this.y = 100;
-  
-  this.speed_x = -1;
-  this.speed_y = -1;
-}
-
-Ball.prototype.drawBall = function () {
-  ctx.beginPath();
-  ctx.arc(x, y, 15, 0, 2 * Math.PI);
-  ctx.fillStyle = "red";
-  ctx.fill();
-  ctx.closePath();
-}
-
-Ball.prototype.ballMove = function () {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-  
-  if (x + 15 > canvas.width) {
-    speed_x = -1 * speed_x  
-  } else if (x < 15) {
-    speed_x = -1 * speed_x
-  }
-  if (y + 15 == leaderRect.y && ((x + 15) > leaderRect.x && (x + 15) < (leaderRect.x + leaderRect.width))) {
-    speed_y = -1 * speed_y
-  } else if (y + 15 > canvas.height) {  
-  } else if (y < 15) {
-    speed_y = -1 * speed_y
-  }
-
-  y += speed_y
-  x += speed_x
-  this.drawBall() 
-}
-
 function gameLoop() {
-  ballMovement()
+  ball.ballMove()
   leaderRect.drawRectagle();
 }
 
