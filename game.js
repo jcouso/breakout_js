@@ -84,9 +84,14 @@ Ball.prototype.checkCollition = function () {
   // check collition with leader rect
   if (this.y + this.radius > this.leaderRect.y && this.y + this.radius < this.leaderRect.y + this.leaderRect.height) {
     if (this.x + this.radius > this.leaderRect.x && this.x + this.radius < this.leaderRect.x + this.leaderRect.width) {
+      if (this.speed_y > 0) {
         this.speed_y = -1 * this.speed_y
+
+      }
     } else if (this.x - this.radius > this.leaderRect.x && this.x - this.radius < this.leaderRect.x + this.leaderRect.width) {
-      this.speed_y = -1 * this.speed_y
+      if (this.speed_y > 0) {
+        this.speed_y = -1 * this.speed_y
+      }
     }
   }
 }
@@ -117,11 +122,13 @@ Tile.prototype.draw = function () {
 }
 
 Tile.prototype.checkCollition = function () {
-  if (this.ball.y - this.ball.radius > this.y && this.ball.y - this.ball.radius < this.y + this.height) {
-    if (this.ball.x + this.ball.radius > this.x && this.ball.x + this.ball.radius < this.x + this.width) {
-      this.dead = true;
-      return true;
-    } 
+  if (!this.dead) {
+    if (this.ball.y - this.ball.radius > this.y && this.ball.y - this.ball.radius < this.y + this.height) {
+      if (this.ball.x + this.ball.radius > this.x && this.ball.x + this.ball.radius < this.x + this.width) {
+        this.dead = true;
+        return true;
+      } 
+    }
   }
 }
 
@@ -158,7 +165,9 @@ function gameLoop() {
   ball.move()
   tiles.forEach(tile => {
     tile.draw()
-    tile.checkCollition()
+    if (tile.checkCollition()) {
+      ball.speed_y = ball.speed_y * -1
+    }
   });
   leaderRect.draw();
 }
