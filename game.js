@@ -26,7 +26,7 @@ LeaderRect.prototype.moveRight = function() {
   if ((this.x + this.width) < this.canvas.width) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.x += this.movingSpeed 
-    this.drawRectagle(this.x, this.y)
+    this.draw(this.x, this.y)
   }
 }
 
@@ -34,7 +34,7 @@ LeaderRect.prototype.moveLeft = function() {
   if (this.x > 0) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.x -= this.movingSpeed
-    this.drawRectagle(this.x, this.y)
+    this.draw(this.x, this.y)
   }
 }
 
@@ -83,34 +83,49 @@ Ball.prototype.checkCollition = function () {
 
   // check collition with leader rect
   if (this.y + this.radius > this.leaderRect.y && this.y + this.radius < this.leaderRect.y + this.leaderRect.height) {
-    if (this.x + this.radius > this.leaderRect.x) {
-      if  (this.x + this.radius < this.leaderRect.x + this.leaderRect.width) {
+    if (this.x + this.radius > this.leaderRect.x && this.x + this.radius < this.leaderRect.x + this.leaderRect.width) {
         this.speed_y = -1 * this.speed_y
-      }
-    } 
+    } else if (this.x - this.radius > this.leaderRect.x && this.x - this.radius < this.leaderRect.x + this.leaderRect.width) {
+      this.speed_y = -1 * this.speed_y
+    }
   }
 }
 
 // *******************************************
 // ***************** Tile
 // *******************************************
-function Tile(canvas, x, y) {
+function Tile(canvas, ball, x, y) {
   this.ctx = canvas.getContext('2d');
-  this.x = x
-  this.y = y
+  this.margin = 10;
+  this.x = x + this.margin
+  this.y = y + this.margin
   this.width = 110;
   this.height = 15;
-  this.margin = 10;
   this.color = "pink"
+  this.ball = ball
+  this.dead = false
 }
 
 Tile.prototype.draw = function () {
-  this.ctx.beginPath()
-  this.ctx.rect((this.x + this.margin), (this.y + this.margin), this.width, this.height)
-  this.ctx.fillStyle = this.color
-  this.ctx.fill()
-  this.ctx.closePath()
+  if (!this.dead) {
+    this.ctx.beginPath()
+    this.ctx.rect(this.x, this.y, this.width, this.height)
+    this.ctx.fillStyle = this.color
+    this.ctx.fill()
+    this.ctx.closePath()
+  }
 }
+
+Tile.prototype.checkCollition = function () {
+  if (this.ball.y - this.ball.radius > this.y && this.ball.y - this.ball.radius < this.y + this.height) {
+    if (this.ball.x + this.ball.radius > this.x && this.ball.x + this.ball.radius < this.x + this.width) {
+      this.dead = true;
+      return true;
+    } 
+  }
+}
+
+// ******************************************
 
 const canvas = document.getElementById("game");
 leaderRect = new LeaderRect(canvas)
@@ -120,7 +135,9 @@ function buildTiles() {
   tiles = []
   quantity = Math.floor(canvas.width / 140);
   for (let i = 0; i <= quantity; i++) {
-    tile = new Tile(canvas, 132 * i, 0)
+    let x = 132 * i
+    let y = 0
+    tile = new Tile(canvas, ball, x, y)
     tiles.push(tile)
   }
   return tiles
@@ -141,6 +158,7 @@ function gameLoop() {
   ball.move()
   tiles.forEach(tile => {
     tile.draw()
+    tile.checkCollition()
   });
   leaderRect.draw();
 }
