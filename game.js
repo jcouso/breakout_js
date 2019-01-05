@@ -44,12 +44,12 @@ LeaderRect.prototype.moveLeft = function() {
 function Ball(canvas, leaderRect) {
   this.canvas = canvas
   this.ctx = canvas.getContext('2d')
-  this.x = 20;
-  this.y = 100;
-  this.radius = 15;
-  this.speed_x = -3;
-  this.speed_y = -3;
   this.leaderRect = leaderRect
+  this.radius = 15;
+  this.x = this.leaderRect.x + this.leaderRect.width /2;
+  this.y = this.leaderRect.y - this.radius;
+  this.speed_x = 0;
+  this.speed_y = 0;
 }
 
 Ball.prototype.draw = function () {
@@ -167,9 +167,14 @@ document.addEventListener('keydown', (event) => {
   if (event.keyCode == 37 && isGameOver == false) {
     leaderRect.moveLeft()
   }
-  if (event.keyCode == 32 && isGameOver == true) {
+  if (event.keyCode == 13 && isGameOver == true) {
     isGameOver = false
     gameInit()
+  }
+
+  if (event.keyCode == 32 && isGameOver == false && ball.speed_y == 0) {
+    ball.speed_x = 2 + Math.ceil((0.5 - Math.random()));
+    ball.speed_y = 4;
   }
 });
 
@@ -177,15 +182,13 @@ function gameOver () {
   var ctx = canvas.getContext("2d");
   ctx.font = "30px Arial";
   ctx.fillText("Game Over", canvas.width/2 - 80, canvas.height/2);
-  ctx.fillText("Press Space To Restart", canvas.width/2 - 150, canvas.height/2 + 30);
-
+  ctx.fillText("Press Enter", canvas.width/2 - 150, canvas.height/2 + 30);
 
   if (isGameOver == false) {
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     clearInterval(gameOverLoop)
   }
 }
-
 
 function gameLoop() {
   if (isGameOver == false) {
