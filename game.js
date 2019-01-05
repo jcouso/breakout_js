@@ -58,7 +58,6 @@ Ball.prototype.draw = function () {
   this.ctx.fillStyle = "red";
   this.ctx.fill();
   this.ctx.closePath(); 
-
 }
 
 Ball.prototype.move = function () {
@@ -94,6 +93,14 @@ Ball.prototype.checkCollition = function () {
         this.speed_x = this.speed_x + ( 0.5 - Math.random()); 
       }
     }
+  }
+}
+
+Ball.prototype.outOfBounds = function() {
+  if (this.y - this.radius == this.canvas.height) {
+    return true
+  } else {
+    return false 
   }
 }
 
@@ -134,10 +141,15 @@ Tile.prototype.checkCollition = function () {
 }
 
 // ******************************************
-
 const canvas = document.getElementById("game");
-leaderRect = new LeaderRect(canvas)
-ball = new Ball(canvas, leaderRect)
+
+
+function gameInit() {
+  leaderRect = new LeaderRect(canvas)
+  ball = new Ball(canvas, leaderRect)
+  tiles = buildTiles()
+}
+
 
 function buildTiles() {
   tiles = []
@@ -160,7 +172,6 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-tiles = buildTiles()
 
 function gameLoop() {
   ball.move()
@@ -171,6 +182,12 @@ function gameLoop() {
     }
   });
   leaderRect.draw();
+
+  if (ball.outOfBounds()) {
+    gameInit();
+  }
 }
 
+
+gameInit()
 setInterval(gameLoop, 10);
