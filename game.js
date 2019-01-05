@@ -160,8 +160,6 @@ function buildTiles() {
   }
   return tiles
 }
-var isGameOver = false;
-
 document.addEventListener('keydown', (event) => {
   if (event.keyCode == 39 && isGameOver == false) {
     leaderRect.moveRight()
@@ -178,15 +176,16 @@ document.addEventListener('keydown', (event) => {
 function gameOver () {
   var ctx = canvas.getContext("2d");
   ctx.font = "30px Arial";
-  ctx.fillText("Game Over", canvas.width/2, canvas.height/2);
+  ctx.fillText("Game Over", canvas.width/2 - 80, canvas.height/2);
+  ctx.fillText("Press Space To Restart", canvas.width/2 - 150, canvas.height/2 + 30);
+
 
   if (isGameOver == false) {
-    canvas.getContext('2d').clearRect(0, 0, canvas.width -20, canvas.height)
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     clearInterval(gameOverLoop)
   }
 }
 
-var gameOverLoop 
 
 function gameLoop() {
   if (isGameOver == false) {
@@ -206,6 +205,9 @@ function gameLoop() {
     gameOverLoop = setInterval(gameOver(), 10);
   }
 }
+
+var gameOverLoop;
+var isGameOver = false;
 gameInit()
 var gameLoopInt = setInterval(gameLoop, 10);
 
