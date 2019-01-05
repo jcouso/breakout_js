@@ -86,11 +86,12 @@ Ball.prototype.checkCollition = function () {
     if (this.x + this.radius > this.leaderRect.x && this.x + this.radius < this.leaderRect.x + this.leaderRect.width) {
       if (this.speed_y > 0) {
         this.speed_y = -1 * this.speed_y
-
+        this.speed_x = this.speed_x + ( 0.5 - Math.random()); 
       }
     } else if (this.x - this.radius > this.leaderRect.x && this.x - this.radius < this.leaderRect.x + this.leaderRect.width) {
       if (this.speed_y > 0) {
         this.speed_y = -1 * this.speed_y
+        this.speed_x = this.speed_x + ( 0.5 - Math.random()); 
       }
     }
   }
