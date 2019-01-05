@@ -143,13 +143,11 @@ Tile.prototype.checkCollition = function () {
 // ******************************************
 const canvas = document.getElementById("game");
 
-
 function gameInit() {
   leaderRect = new LeaderRect(canvas)
   ball = new Ball(canvas, leaderRect)
   tiles = buildTiles()
 }
-
 
 function buildTiles() {
   tiles = []
@@ -162,32 +160,52 @@ function buildTiles() {
   }
   return tiles
 }
+var isGameOver = false;
 
 document.addEventListener('keydown', (event) => {
-  if (event.keyCode == 39) {
+  if (event.keyCode == 39 && isGameOver == false) {
     leaderRect.moveRight()
   }
-  if (event.keyCode == 37) {
+  if (event.keyCode == 37 && isGameOver == false) {
     leaderRect.moveLeft()
+  }
+  if (event.keyCode == 32 && isGameOver == true) {
+    isGameOver = false
+    gameInit()
   }
 });
 
+function gameOver () {
+  var ctx = canvas.getContext("2d");
+  ctx.font = "30px Arial";
+  ctx.fillText("Game Over", canvas.width/2, canvas.height/2);
 
-function gameLoop() {
-  ball.move()
-  tiles.forEach(tile => {
-    tile.draw()
-    if (tile.checkCollition()) {
-      ball.speed_y = ball.speed_y * -1
-    }
-  });
-  leaderRect.draw();
-
-  if (ball.outOfBounds()) {
-    gameInit();
+  if (isGameOver == false) {
+    canvas.getContext('2d').clearRect(0, 0, canvas.width -20, canvas.height)
+    clearInterval(gameOverLoop)
   }
 }
 
+var gameOverLoop 
 
+function gameLoop() {
+  if (isGameOver == false) {
+    ball.move()
+    tiles.forEach(tile => {
+      tile.draw()
+      if (tile.checkCollition()) {
+        ball.speed_y = ball.speed_y * -1
+      }
+    });
+    leaderRect.draw();
+  }
+
+  if (ball.outOfBounds() && isGameOver == false) {
+    isGameOver = true
+    canvas.getContext('2d').clearRect(0, 0, canvas.width -20, canvas.height)
+    gameOverLoop = setInterval(gameOver(), 10);
+  }
+}
 gameInit()
-setInterval(gameLoop, 10);
+var gameLoopInt = setInterval(gameLoop, 10);
+
