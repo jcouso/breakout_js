@@ -1,1 +1,1 @@
-This a replica of the breakout game written in js. This game was develop for studying perposes.
+This game was inspire from Breakout arcade game (1976). This game was develop for educational purpose.
