@@ -1,0 +1,23 @@
+{
+  "name": "breakout_js",
+  "version": "1.0.0",
+  "description": "This game was inspire from Breakout arcade game (1976). This game was develop for educational purpose.",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcouso/breakout_js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jcouso/breakout_js/issues"
+  },
+  "homepage": "https://github.com/jcouso/breakout_js#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
