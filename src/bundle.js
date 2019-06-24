@@ -1,71 +1,71 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-var Player = require('./player')
-
-// *******************************************
-// ***************** BALL 
-// *******************************************
-function Ball(canvas, leaderRect) {
+module.exports = class Ball {
+  constructor(canvas, player) {
   this.canvas = canvas
   this.ctx = canvas.getContext('2d')
-  this.leaderRect = leaderRect
+  this.player = player
   this.radius = 15;
-  this.x = this.leaderRect.x + this.leaderRect.width /2;
-  this.y = this.leaderRect.y - this.radius;
+  this.x = this.player.x + this.player.width /2;
+  this.y = this.player.y - this.radius;
   this.speed_x = 0;
   this.speed_y = 0;
-}
-
-Ball.prototype.draw = function () {
-  this.ctx.beginPath();
-  this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-  this.ctx.fillStyle = "red";
-  this.ctx.fill();
-  this.ctx.closePath(); 
-}
-
-Ball.prototype.move = function () {
-  this.ctx.clearRect(0, 0, canvas.width, canvas.height)
-  this.checkCollition();
-  this.y += this.speed_y
-  this.x += this.speed_x
-  this.draw()
-}
-
-Ball.prototype.checkCollition = function () {
-  // check colliton agaist the end of the canvas
-  if (this.x + this.radius > this.canvas.width) {
-    this.speed_x = -1 * this.speed_x  
-  } else if (this.x - this.radius < 0) {
-    this.speed_x = -1 * this.speed_x
   }
 
-  if (this.y - this.radius < 0) {
-    this.speed_y = -1 * this.speed_y
+  draw() {
+    this.ctx.beginPath();
+    this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "red";
+    this.ctx.fill();
+    this.ctx.closePath(); 
   }
 
-  // check collition with leader rect
-  if (this.y + this.radius > this.leaderRect.y && this.y + this.radius < this.leaderRect.y + this.leaderRect.height) {
-    if (this.x + this.radius > this.leaderRect.x && this.x + this.radius < this.leaderRect.x + this.leaderRect.width) {
-      if (this.speed_y > 0) {
-        this.speed_y = -1 * this.speed_y
-        this.speed_x = this.speed_x + ( 0.5 - Math.random()); 
-      }
-    } else if (this.x - this.radius > this.leaderRect.x && this.x - this.radius < this.leaderRect.x + this.leaderRect.width) {
-      if (this.speed_y > 0) {
-        this.speed_y = -1 * this.speed_y
-        this.speed_x = this.speed_x + ( 0.5 - Math.random()); 
+  move() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.checkCollition();
+    this.y += this.speed_y
+    this.x += this.speed_x
+    this.draw()
+  }
+
+  checkCollition(){
+    // check colliton agaist the end of the canvas
+    if (this.x + this.radius > this.canvas.width) {
+      this.speed_x = -1 * this.speed_x  
+    } else if (this.x - this.radius < 0) {
+      this.speed_x = -1 * this.speed_x
+    }
+
+    if (this.y - this.radius < 0) {
+      this.speed_y = -1 * this.speed_y
+    }
+
+    // check collition with leader rect
+    if (this.y + this.radius > this.player.y && this.y + this.radius < this.player.y + this.player.height) {
+      if (this.x + this.radius > this.player.x && this.x + this.radius < this.player.x + this.player.width) {
+        if (this.speed_y > 0) {
+          this.speed_y = -1 * this.speed_y
+          this.speed_x = this.speed_x + ( 0.5 - Math.random()); 
+        }
+      } else if (this.x - this.radius > this.player.x && this.x - this.radius < this.player.x + this.player.width) {
+        if (this.speed_y > 0) {
+          this.speed_y = -1 * this.speed_y
+          this.speed_x = this.speed_x + ( 0.5 - Math.random()); 
+        }
       }
     }
   }
-}
 
-Ball.prototype.outOfBounds = function() {
-  if (this.y - this.radius == this.canvas.height) {
-    return true
-  } else {
-    return false 
+  outOfBounds() {
+    if (this.y - this.radius == this.canvas.height) {
+      return true
+    } else {
+      return false 
+    }
   }
 }
+},{}],2:[function(require,module,exports){
+var Player = require('./player')
+var Ball = require('./ball')
 
 // *******************************************
 // ***************** Tile
@@ -107,8 +107,8 @@ Tile.prototype.checkCollition = function () {
 const canvas = document.getElementById("game");
 
 function gameInit() {
-  leaderRect = new Player(canvas)
-  ball = new Ball(canvas, leaderRect)
+  player = new Player(canvas)
+  ball = new Ball(canvas, player)
   tiles = buildTiles()
 }
 
@@ -125,10 +125,10 @@ function buildTiles() {
 }
 document.addEventListener('keydown', (event) => {
   if (event.keyCode == 39 && isGameOver == false) {
-    leaderRect.moveRight()
+    player.moveRight()
   }
   if (event.keyCode == 37 && isGameOver == false) {
-    leaderRect.moveLeft()
+    player.moveLeft()
   }
   if (event.keyCode == 13 && isGameOver == true) {
     isGameOver = false
@@ -162,7 +162,7 @@ function gameLoop() {
         ball.speed_y = ball.speed_y * -1
       }
     });
-    leaderRect.draw();
+    player.draw();
   }
 
   if (ball.outOfBounds() && isGameOver == false) {
@@ -178,7 +178,7 @@ gameInit();
 var gameLoopInt = setInterval(gameLoop, 10);
 
 
-},{"./player":2}],2:[function(require,module,exports){
+},{"./ball":1,"./player":3}],3:[function(require,module,exports){
 
 //
 // Player call
@@ -224,4 +224,4 @@ module.exports = class Player {
   }
 }
 
-},{}]},{},[1]);
+},{}]},{},[2]);
